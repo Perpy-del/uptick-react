@@ -11,7 +11,7 @@ const BlogComponent = () => {
           <h1 className="text-5xl font-semibold font-serif pb-2">
             Sample blog post
           </h1>
-          <p className="font-light text-gray-400 dark:text-gray-800 pb-5">
+          <p className="font-light text-gray-400 pb-5">
             January 1, 2021 by{' '}
             <span className="cursor-pointer font-normal text-blue-400 underline hover:text-blue-300">
               Mark

@@ -2,8 +2,8 @@ import { recentPosts, RecentPostsInterface } from '../data';
 
 const BlogComponent = () => {
   return (
-    <div className="px-5 md:px-10 lg:px-20 flex gap-10">
-      <div className='w-full'>
+    <div className="px-5 md:px-10 lg:px-20 flex flex-col md:flex-row gap-10">
+      <div className='md:w-1/2 w-full'>
         <h1 className="pb-5 text-3xl border-b border-gray-200 dark:border-gray-700 font-semibold font-serif">
           From the firehose
         </h1>
@@ -30,7 +30,7 @@ const BlogComponent = () => {
         </div>
         <p className="py-5"></p>
       </div>
-      <div className='w-[44%]'>
+      <div className='md:w-[50%] lg:w-[44%]'>
         <div className="p-5 bg-gray-300 dark:bg-gray-600 rounded-md mb-3">
           <h1 className='font-serif font-medium text-3xl pb-3 italic'>About</h1>
           <p>

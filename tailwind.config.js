@@ -26,8 +26,8 @@ export const theme = {
       xl: '1440px',
     },
     fontFamily: {
-      roboto: ['Roboto', 'sans-serif'],
-      play: ['Playfair', 'serif'],
+      sans: ['Roboto', 'sans-serif'],
+      serif: ['Playfair Display', 'serif'],
     },
   },
   extend: {

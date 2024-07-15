@@ -5,10 +5,10 @@ import { categoriesData } from '../data';
 
 const NavBar = () => {
   return (
-    <div className="px-5 md:px-10 lg:px-20">
+    <div className="px-5 md:px-10 lg:px-20 pb-2">
       <div className="h-[70px] flex items-center justify-between">
-        <a href="">Subscribe</a>
-        <h1>Uptick Blog</h1>
+        <a href="" className='text-[#6C757D] underline hover:text-[#6C757D]/80'>Subscribe</a>
+        <h1 className='font-serif text-4xl font-semibold'>Uptick Blog</h1>
         <div className="flex items-center gap-3">
           <div className="cursor-pointer">
             <Search />

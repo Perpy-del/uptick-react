@@ -1,0 +1,1 @@
+export const categoriesData = ["World", "Technology", "Design", "Development", "BioTech"]

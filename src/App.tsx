@@ -1,3 +1,4 @@
+import BlogComponent from "./components/BlogComponent"
 import CategoryComponent from "./components/CategoryComponent"
 import HeroComponent from "./components/HeroComponent"
 import NavBar from "./components/NavBar"
@@ -10,6 +11,7 @@ function App() {
       <NavBar />
       <HeroComponent />
       <CategoryComponent />
+      <BlogComponent />
       </div>
     </ThemeProvider>
   )

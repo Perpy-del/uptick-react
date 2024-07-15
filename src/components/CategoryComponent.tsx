@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 const CategoryComponent = () => {
   return (
     <div className='flex px-5 md:px-10 lg:px-20 gap-10 pb-10'>
-      <div className='flex border border-gray-700 shadow rounded-md justify-between'>
+      <div className='flex border border-gray-200 dark:border-gray-700 shadow rounded-md justify-between'>
         <div className='p-5 w-[60%]'>
           <h3 className='text-[18px] font-bold text-blue-500 pb-3'>World</h3>
           <h2 className='text-3xl font-serif font-medium'>Featured post</h2>
@@ -17,9 +17,9 @@ const CategoryComponent = () => {
             <ArrowRight size={18} />
           </div>
         </div>
-        <div className='w-[200px] bg-slate-500 flex items-center justify-center text-[18px] font-medium rounded-tr-md rounded-br-md'>Thumbnail</div>
+        <div className='w-[200px] bg-slate-300 dark:bg-slate-500 flex items-center justify-center text-[18px] font-medium rounded-tr-md rounded-br-md'>Thumbnail</div>
       </div>
-      <div className='flex border border-gray-700 shadow rounded-md justify-between'>
+      <div className='flex border border-gray-200 dark:border-gray-700 shadow rounded-md justify-between'>
         <div className='p-5 w-[60%]'>
           <h3 className='text-[18px] font-bold text-green-500 pb-3'>Design</h3>
           <h2 className='text-3xl font-serif font-medium'>Post title</h2>
@@ -33,7 +33,7 @@ const CategoryComponent = () => {
             <ArrowRight size={18} />
           </div>
         </div>
-        <div className='w-[200px] bg-slate-500 flex items-center justify-center text-[18px] font-medium rounded-tr-md rounded-br-md'>Thumbnail</div>
+        <div className='w-[200px] bg-slate-300 dark:bg-slate-500 flex items-center justify-center text-[18px] font-medium rounded-tr-md rounded-br-md'>Thumbnail</div>
       </div>
     </div>
   );

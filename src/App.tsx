@@ -1,19 +1,15 @@
-import BlogComponent from "./components/BlogComponent"
-import CategoryComponent from "./components/CategoryComponent"
-import HeroComponent from "./components/HeroComponent"
-import NavBar from "./components/NavBar"
-import { ThemeProvider } from "./components/theme-provider"
+import { Routes, Route } from "react-router-dom"
+import Home from "./pages/Home"
+import SignUpPage from "./pages/Register"
+import LoginPage from "./pages/Login"
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="bg-slate-50 text-black dark:bg-[#212529] dark:text-white">
-      <NavBar />
-      <HeroComponent />
-      <CategoryComponent />
-      <BlogComponent />
-      </div>
-    </ThemeProvider>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/login" element={<LoginPage />} />
+    </Routes>
   )
 }
 

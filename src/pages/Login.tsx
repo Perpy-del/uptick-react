@@ -2,7 +2,6 @@
 
 import { ThemeProvider } from '../components/theme-provider';
 import { ModeToggle } from '../components/mode-toggle';
-import RegisterFormComponent from '../components/RegisterFormComponent';
 import { useNavigate } from 'react-router-dom';
 import LoginFormComponent from '../components/LoginFormComponent';
 

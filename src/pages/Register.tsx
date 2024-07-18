@@ -11,7 +11,7 @@ const SignUpPage = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="bg-slate-50 text-black dark:bg-[#212529] dark:text-white h-screen flex flex-col justify-center w-screen">
-        <div className='w-1/3 mx-auto'>
+        <div className='w-full px-5 md:px-0 md:w-2/3 lg:w-1/3 mx-auto'>
           <h1 className="pb-4 text-3xl font-serif font-bold">Uptick</h1>
           <h2 className="text-2xl font-semibold pb-2">Please sign up</h2>
           <RegisterFormComponent />

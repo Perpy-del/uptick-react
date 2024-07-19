@@ -34,7 +34,7 @@ const BlogComponent = () => {
         <div className="p-5 bg-gray-300 dark:bg-gray-600 rounded-md mb-3">
           <h1 className='font-serif font-medium text-3xl pb-3 italic'>About</h1>
           <p>
-            Perpetual Meninwa is a software developer who loves to solve critical solutions to technological problems. I love NodeJS, NextJS, Typescript and ExpressJS. Currently learning how microservices work as well as how to use cloud services (AWS and Azure).
+            Perpetual Meninwa is a software developer who loves to create solutions to technological problems. I love NodeJS, NextJS, Typescript and ExpressJS. Currently learning how microservices work as well as how to use cloud services (AWS and Azure).
           </p>
         </div>
         <div>
@@ -42,7 +42,7 @@ const BlogComponent = () => {
           <div>
             {recentPosts.map((post: RecentPostsInterface, index: number) => {
               return (
-                <div key={index} className="py-5 border-t border-gray-300 dark:border-gray-700 flex gap-4 items-center justify-center">
+                <div key={index} className="py-5 border-t border-gray-300 dark:border-gray-700 flex gap-4 items-center justify-center cursor-pointer">
                   <div className="w-[100px] h-[100px] bg-gray-300 dark:bg-gray-600"></div>
                   <div className='w-2/3'>
                     <h3 className='font-semibold font-serif'>{post.name}</h3>

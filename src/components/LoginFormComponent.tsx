@@ -16,6 +16,7 @@ import {
 import { Input } from '../components/ui/input';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { useToast } from "../components/ui/use-toast"
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -23,6 +24,7 @@ const formSchema = z.object({
 });
 
 const LoginFormComponent = () => {
+  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -38,9 +40,10 @@ const LoginFormComponent = () => {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
+    toast({
+      description: "Account created successfully"
+    })
   }
 
   return (

@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Button } from '../components/ui/button';
 import {
@@ -16,6 +17,10 @@ import {
 import { Input } from '../components/ui/input';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { Dispatch } from '@reduxjs/toolkit';
+import { signup } from '../uptickBlogStore/authSlice';
+import { useToast } from './ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
   firstName: z.string().min(3).max(50),
@@ -26,8 +31,12 @@ const formSchema = z.object({
 });
 
 const RegisterFormComponent = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const dispatch: Dispatch<any> = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { loading, error } = useSelector((state: any) => state.auth);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,6 +49,8 @@ const RegisterFormComponent = () => {
     },
   });
 
+  const { reset } = form;
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -48,10 +59,25 @@ const RegisterFormComponent = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await dispatch(
+        signup({
+          email: values.email,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+        })
+      ).unwrap();
+      toast({
+        description: 'Account created successfully',
+      });
+      reset();
+      navigate('/login');
+    } catch (error) {
+      console.error('Signup failed', error);
+    }
   }
 
   return (
@@ -103,13 +129,16 @@ const RegisterFormComponent = () => {
             <FormItem>
               <FormLabel>Password:</FormLabel>
               <FormControl>
-                <div className='relative flex items-center'>
+                <div className="relative flex items-center">
                   <Input
                     placeholder="******"
                     {...field}
                     type={showPassword ? 'text' : 'password'}
                   />
-                  <span className='absolute right-4 cursor-pointer' onClick={togglePasswordVisibility}>
+                  <span
+                    className="absolute right-4 cursor-pointer"
+                    onClick={togglePasswordVisibility}
+                  >
                     {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
                   </span>
                 </div>
@@ -125,14 +154,21 @@ const RegisterFormComponent = () => {
             <FormItem>
               <FormLabel>Confirm Password:</FormLabel>
               <FormControl>
-              <div className='relative flex items-center'>
+                <div className="relative flex items-center">
                   <Input
                     placeholder="******"
                     {...field}
                     type={showConfirmPassword ? 'text' : 'password'}
                   />
-                  <span className='absolute right-4 cursor-pointer' onClick={toggleConfirmPassword}>
-                    {showConfirmPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                  <span
+                    className="absolute right-4 cursor-pointer"
+                    onClick={toggleConfirmPassword}
+                  >
+                    {showConfirmPassword ? (
+                      <Eye size={16} />
+                    ) : (
+                      <EyeOff size={16} />
+                    )}
                   </span>
                 </div>
               </FormControl>
@@ -140,7 +176,14 @@ const RegisterFormComponent = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Loading...' : 'Submit'}
+        </Button>
+        {error && (
+          <p className="text-sm text-red-500">
+            Error submitting the form: {error.data.error}
+          </p>
+        )}
       </form>
     </Form>
   );

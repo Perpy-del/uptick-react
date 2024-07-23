@@ -3,25 +3,50 @@ import { Button } from './ui/button';
 import { categoriesData } from '../data';
 import { useNavigate } from 'react-router-dom';
 import { ModeToggle } from './mode-toggle';
+import { useUptickHook } from '../hooks/useUptickHook';
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const { user, logout } = useUptickHook();
+
+  if (!user) {
+    navigate('/login')
+  }
 
   return (
     <div className="px-5 md:px-10 lg:px-20 pb-2">
       <div className="h-[70px] flex items-center justify-between">
-        <a href="" className='text-[#6C757D] underline hover:text-[#6C757D]/80'>Subscribe</a>
-        <h1 className='font-serif text-2xl lg:text-4xl font-semibold cursor-pointer' onClick={() => navigate('/')}>Uptick</h1>
+        <a href="" className="text-[#6C757D] underline hover:text-[#6C757D]/80">
+          Subscribe
+        </a>
+        <h1
+          className="font-serif text-2xl lg:text-4xl font-semibold cursor-pointer"
+          onClick={() => navigate('/')}
+        >
+          Uptick
+        </h1>
         <div className="flex items-center gap-3">
           <div className="cursor-pointer">
             <Search />
           </div>
-          <Button onClick={() => navigate('/signup')}>Sign up</Button>
+          {user ? (
+            <p>
+              Welcome, {user?.data?.firstName} {user?.data?.lastName}
+            </p>
+          ) : (
+            <Button onClick={() => navigate('/signup')}>Sign up</Button>
+          )}
+          {user && <Button onClick={logout} className='text-red-700 dark:text-red-700 font-bold'>Log out</Button>}
         </div>
       </div>
       <div className="h-11 border-t border-b flex items-center gap-3 md:gap-0 md:justify-between mb-5 overflow-scroll md:overflow-auto">
         {categoriesData.map((category, index) => (
-          <h3 className='cursor-pointer dark:text-gray-400 hover:text-[17px] hover:dark:text-white transition-all transform duration-300' key={index}>{category}</h3>
+          <h3
+            className="cursor-pointer dark:text-gray-400 hover:text-[17px] hover:dark:text-white transition-all transform duration-300"
+            key={index}
+          >
+            {category}
+          </h3>
         ))}
       </div>
       <ModeToggle />

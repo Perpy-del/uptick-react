@@ -1,9 +1,5 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import { Button } from '../components/ui/button';
 import {
   Form,
@@ -16,29 +12,12 @@ import {
 import { Input } from '../components/ui/input';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-
-const formSchema = z.object({
-  firstName: z.string().min(3).max(50),
-  lastName: z.string().min(3).max(50),
-  email: z.string().email(),
-  password: z.string().min(6).max(50),
-  confirmPassword: z.string(),
-});
+import { useUptickHook } from '../hooks/useUptickHook';
 
 const RegisterFormComponent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
+  const { signUpForm, signUpSubmit, signUpLoading, signUpError } = useUptickHook();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -46,19 +25,13 @@ const RegisterFormComponent = () => {
 
   const toggleConfirmPassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+    <Form {...signUpForm}>
+      <form onSubmit={signUpForm.handleSubmit(signUpSubmit)} className="space-y-2">
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="firstName"
           render={({ field }) => (
             <FormItem>
@@ -71,7 +44,7 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="lastName"
           render={({ field }) => (
             <FormItem>
@@ -84,7 +57,7 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -97,19 +70,22 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password:</FormLabel>
               <FormControl>
-                <div className='relative flex items-center'>
+                <div className="relative flex items-center">
                   <Input
                     placeholder="******"
                     {...field}
                     type={showPassword ? 'text' : 'password'}
                   />
-                  <span className='absolute right-4 cursor-pointer' onClick={togglePasswordVisibility}>
+                  <span
+                    className="absolute right-4 cursor-pointer"
+                    onClick={togglePasswordVisibility}
+                  >
                     {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
                   </span>
                 </div>
@@ -119,20 +95,27 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Confirm Password:</FormLabel>
               <FormControl>
-              <div className='relative flex items-center'>
+                <div className="relative flex items-center">
                   <Input
                     placeholder="******"
                     {...field}
                     type={showConfirmPassword ? 'text' : 'password'}
                   />
-                  <span className='absolute right-4 cursor-pointer' onClick={toggleConfirmPassword}>
-                    {showConfirmPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+                  <span
+                    className="absolute right-4 cursor-pointer"
+                    onClick={toggleConfirmPassword}
+                  >
+                    {showConfirmPassword ? (
+                      <Eye size={16} />
+                    ) : (
+                      <EyeOff size={16} />
+                    )}
                   </span>
                 </div>
               </FormControl>
@@ -140,7 +123,14 @@ const RegisterFormComponent = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={signUpLoading}>
+          {signUpLoading ? 'Loading...' : 'Submit'}
+        </Button>
+        {signUpError && (
+          <p className="text-sm text-red-500">
+            Error submitting the form: {signUpError.data.error}
+          </p>
+        )}
       </form>
     </Form>
   );

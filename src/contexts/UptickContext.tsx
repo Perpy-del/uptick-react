@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { authenticatedRequest, BASE_URL } from '../lib/utils';
-// import { BASE_URL } from '../lib/utils';
 
 export const UptickContext = createContext<any>({});
 
@@ -49,6 +48,15 @@ const signUpFormSchema = z.object({
   confirmPassword: z.string(),
 });
 
+const blogFormSchema = z.object({
+  title: z.string().min(3, 'Title is required').max(50),
+  content: z.string().min(3, 'Content is required'),
+  isFeatured: z.boolean().optional(),
+  author: z.string().min(3, 'Author is required').max(50),
+  category: z.string().min(3, 'Category selection is required').max(50),
+  thumbnail: z.string().url('Thumbnail must be a valid URL'),
+});
+
 const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -56,10 +64,14 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [signUpLoading, setSignUpLoading] = useState<boolean>(false);
   const [blogLoading, setBlogLoading] = useState<boolean>(false);
+  const [newBlogLoading, setNewBlogLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
   const [signUpError, setSignUpError] = useState<any>(null);
+  const [blogError, setBlogError] = useState<any>(null);
   const [user, setUser] = useState<User | null>(null);
   const [blogs, setBlogs] = useState<Array<any>>([]);
+  const [blogPost, setBlogPost] = useState<BlogInterface | null>(null)
+  const [newBlogPost, setNewBlogPost] = useState<BlogInterface | null>(null)
     
   useEffect(() => {
     getAllBlogs()
@@ -81,6 +93,18 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
       email: '',
       password: '',
       confirmPassword: '',
+    },
+  });
+
+  const blogForm = useForm<z.infer<typeof blogFormSchema>>({
+    resolver: zodResolver(blogFormSchema),
+    defaultValues: {
+      title: '',
+      content: '',
+      isFeatured: false,
+      author: '',
+      category: '',
+      thumbnail: '',
     },
   });
 
@@ -131,11 +155,37 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  async function blogPostSubmit(values: z.infer<typeof blogFormSchema>) {
+    setNewBlogLoading(true);
+    try {
+      const response = await authenticatedRequest('POST', '/posts/create', {
+        title: values.title,
+        category: values.category,
+        is_featured: values.isFeatured,
+        author: values.author,
+        thumbnail: values.thumbnail,
+        body: values.content
+      });
+      if (response.data) {
+        setNewBlogPost(response.data);
+      }
+      toast({
+        description: 'Blog created successfully',
+      });
+      blogForm.reset();
+      navigate('/blog');
+    } catch (error) {
+      console.log(error);
+      setBlogError(error);
+    } finally {
+      setNewBlogLoading(false);
+    }
+  }
+
   async function getAllBlogs() {
     setBlogLoading(true);
     try {
       const response = await authenticatedRequest('GET', '/posts');
-      console.log(response.data);
       if (response.data) {
         setBlogs(response.data);
       }
@@ -149,10 +199,9 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
   async function getBlog (identifier: string) {
     setBlogLoading(true);
     try {
-      const response = await authenticatedRequest('GET', `/posts/${identifier}`);
-      console.log(response.data);
+      const response = await authenticatedRequest('GET', `/post/${identifier}`);
       if (response.data) {
-        return response.data;
+        setBlogPost(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -170,19 +219,25 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
     <UptickContext.Provider
       value={{
         loginSubmit,
+        signUpSubmit,
+        blogPostSubmit,
         loading,
+        blogLoading,
+        newBlogLoading,
         error,
+        signUpError,
+        blogError,
         form,
+        signUpForm,
+        blogForm,
         user,
         logout,
-        signUpForm,
-        signUpSubmit,
         signUpLoading,
-        signUpError,
         getAllBlogs,
         getBlog,
-        blogLoading,
         blogs,
+        blogPost,
+        newBlogPost
       }}
     >
       {children}

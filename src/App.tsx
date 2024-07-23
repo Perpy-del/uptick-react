@@ -7,6 +7,8 @@ import { ThemeProvider } from './components/theme-provider';
 import { Toaster } from './components/ui/toaster';
 import UptickContextProvider from './contexts/UptickContext';
 import BlogPost from './pages/BlogPost';
+import NewPost from './pages/NewPost';
+import EditPost from './pages/EditPost';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogPost />} />
+            <Route path="/create-post" element={<NewPost />} />
+            <Route path="/edit/:id" element={<EditPost />} />
           </Routes>
         </UptickContextProvider>
         <Toaster />

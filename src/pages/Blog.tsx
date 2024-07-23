@@ -5,24 +5,38 @@ import { BlogInterface } from '../contexts/UptickContext';
 import { dateFormatter } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
-// import { BlogInterface } from '../contexts/UptickContext';
-
+import { useEffect, useState } from 'react';
 const Blog = () => {
   const navigate = useNavigate();
-  const { blogs, blogLoading } = useUptickHook();
+  const { blogs, getAllBlogs, deletePostSubmit } = useUptickHook();
+  const [activeCategory, setActiveCategory] = useState('All');
 
-  const lastBlog = blogs[blogs.length - 1];
+  
+  useEffect(() => {
+    getAllBlogs();
+  }, []);
+  
+  const filteredBlogs = activeCategory === 'All'
+  ? blogs
+  : blogs.filter((blog: any) => blog.category === activeCategory);
+  
+  const lastBlog = filteredBlogs[filteredBlogs.length - 1];
 
-  if (blogLoading) {
-    <div className='flex items-center justify-center text-lg font-bold'>
+  if (!blogs.length) {
+    <div className="flex items-center justify-center text-lg font-bold">
       <h1>Loading</h1>
-    </div>
+    </div>;
   }
 
   return (
     <div className="bg-slate-50 text-black dark:bg-[#212529] dark:text-white">
-      <NavBar />
-      <Button className='ml-5 md:ml-10 lg:ml-20 w-52' onClick={() => navigate('/create-post')}>Create New Post</Button>
+      <NavBar activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+      <Button
+        className="ml-5 md:ml-10 lg:ml-20 w-52"
+        onClick={() => navigate('/create-post')}
+      >
+        Create New Post
+      </Button>
       <div className="py-10 px-5 md:px-10 lg:px-20 border-gray-200 dark:border-gray-700">
         <h1 className="text-5xl font-semibold font-serif pb-2">
           {lastBlog?.title}
@@ -33,9 +47,7 @@ const Blog = () => {
             {lastBlog?.author}
           </span>
         </p>
-        <p>
-          {lastBlog?.body}
-        </p>
+        <p>{lastBlog?.body}</p>
       </div>
       <div className="px-5 md:px-10 lg:px-20">
         <h2 className="font-serif font-medium text-3xl italic pb-3">
@@ -46,15 +58,37 @@ const Blog = () => {
             return (
               <div
                 key={index}
-                className="py-5 border-t border-gray-300 dark:border-gray-700 flex gap-4 items-center justify-center cursor-pointer"
-                onClick={() => {
-                  navigate(`/blog/${blog.blogId}`)
-                }}
+                className="py-5 border-t border-gray-300 dark:border-gray-700 flex flex-col md:flex-row gap-4 items-center justify-center md:justify-between cursor-pointer"
               >
+                <div className='flex gap-4 items-center md:pl-10'>
                 <div className="w-[100px] h-[100px] bg-gray-300 dark:bg-gray-600"></div>
-                <div className="w-2/3">
+                <div
+                  className="w-2/3"
+                  onClick={() => {
+                    navigate(`/blog/${blog.blogId}`);
+                  }}
+                >
                   <h3 className="font-semibold font-serif">{blog.title}</h3>
-                  <p className="text-sm text-gray-400">{dateFormatter(blog.createdAt)}</p>
+                  <p className="text-sm text-gray-400">
+                    {dateFormatter(blog.createdAt)}
+                  </p>
+                </div>
+                </div>
+                <div className="flex gap-2 md:pr-10">
+                  <Button
+                    variant={'edit'}
+                    onClick={() => {
+                      navigate(`/edit/${blog.blogId}`);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant={'destructive'}
+                    onClick={() => deletePostSubmit(blog.blogId)}
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             );

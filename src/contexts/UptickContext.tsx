@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 import { useToast } from '../components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -57,6 +57,15 @@ const blogFormSchema = z.object({
   thumbnail: z.string().url('Thumbnail must be a valid URL'),
 });
 
+const editBlogFormSchema = z.object({
+  title: z.string().optional(),
+  content: z.string().optional(),
+  isFeatured: z.boolean().optional(),
+  author: z.string().optional(),
+  category: z.string().optional(),
+  thumbnail: z.string().optional(),
+});
+
 const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -72,10 +81,6 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [blogs, setBlogs] = useState<Array<any>>([]);
   const [blogPost, setBlogPost] = useState<BlogInterface | null>(null)
   const [newBlogPost, setNewBlogPost] = useState<BlogInterface | null>(null)
-    
-  useEffect(() => {
-    getAllBlogs()
-  }, [])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -107,6 +112,29 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
       thumbnail: '',
     },
   });
+
+  const editBlogForm = useForm<z.infer<typeof editBlogFormSchema>>({
+    resolver: zodResolver(editBlogFormSchema),
+    defaultValues: {
+      title: '',
+      content: '',
+      isFeatured: false,
+      author: '',
+      category: '',
+      thumbnail: '',
+    },
+  });
+
+    
+  const categories = blogs.map((blog: any) => blog.category);
+  const uniqueCategories = new Set(categories);
+  const categoriesData: Array<any> = Array.from(uniqueCategories);
+  
+  function getCategory(category: string) {
+    const catBlogs = blogs.filter((blog: any) => blog.category === category);
+    console.log(catBlogs)
+    setBlogs(catBlogs);
+  }
 
   async function loginSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -182,6 +210,47 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  async function editPostSubmit(values: z.infer<typeof editBlogFormSchema>, id: string) {
+    setNewBlogLoading(true);
+    try {
+      await authenticatedRequest('PUT', `/post/${id}`, {
+        title: values.title,
+        category: values.category,
+        is_featured: values.isFeatured,
+        author: values.author,
+        thumbnail: values.thumbnail,
+        body: values.content
+      });
+      toast({
+        description: 'Blog updated successfully',
+      });
+      editBlogForm.reset();
+      navigate('/blog');
+    } catch (error) {
+      console.log(error);
+      setBlogError(error);
+    } finally {
+      setNewBlogLoading(false);
+    }
+  }
+
+  async function deletePostSubmit(id: string) {
+    setNewBlogLoading(true);
+    try {
+      await authenticatedRequest('DELETE', `/post/${id}`);
+      toast({
+        description: 'Blog deleted successfully',
+      });
+    } catch (error) {
+      console.log(error);
+      setBlogError(error);
+    } finally {
+      setNewBlogLoading(false);
+    }
+  }
+
+
+
   async function getAllBlogs() {
     setBlogLoading(true);
     try {
@@ -230,6 +299,7 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
         form,
         signUpForm,
         blogForm,
+        editBlogForm,
         user,
         logout,
         signUpLoading,
@@ -237,7 +307,12 @@ const UptickContextProvider = ({ children }: { children: React.ReactNode }) => {
         getBlog,
         blogs,
         blogPost,
-        newBlogPost
+        newBlogPost,
+        editPostSubmit,
+        deletePostSubmit,
+        setBlogs,
+        categoriesData,
+        getCategory
       }}
     >
       {children}

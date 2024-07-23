@@ -20,7 +20,7 @@ const Home = () => {
 
   return (
     <div className="bg-slate-50 text-black dark:bg-[#212529] dark:text-white">
-      <NavBar />
+      <NavBar activeCategory={undefined} setActiveCategory={undefined} />
       <HeroComponent />
       <CategoryComponent />
       <BlogComponent />

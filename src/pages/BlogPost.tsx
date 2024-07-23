@@ -14,9 +14,15 @@ const BlogPost = () => {
     getBlog(id);
   }, []);
 
+  if (!blogPost) {
+    <div className='flex items-center justify-center bg-slate-50 text-black dark:bg-[#212529] dark:text-white'>
+      <h1>Loading...</h1>
+    </div>
+  }
+
   return (
     <div className="bg-slate-50 text-black dark:bg-[#212529] dark:text-white">
-      <NavBar />
+      <NavBar activeCategory={undefined} setActiveCategory={undefined} />
       <div className="px-5 md:px-10 lg:px-20">
         <Button className='mb-3' onClick={() => navigate('/blog')}> Go Back </Button>
         <div className="pt-10 pb-5 border-b border-gray-200 dark:border-gray-700">

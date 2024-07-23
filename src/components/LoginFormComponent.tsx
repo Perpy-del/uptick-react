@@ -1,9 +1,5 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import { Button } from '../components/ui/button';
 import {
   Form,
@@ -16,39 +12,20 @@ import {
 import { Input } from '../components/ui/input';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-import { useToast } from "../components/ui/use-toast"
-
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6).max(50),
-});
+import { useUptickHook } from '../hooks/useUptickHook';
 
 const LoginFormComponent = () => {
-  const { toast } = useToast();
+  const { loginSubmit, loading, error, form } = useUptickHook();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      description: "Account created successfully"
-    })
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+      <form onSubmit={form.handleSubmit(loginSubmit)} className="space-y-2">
         <FormField
           control={form.control}
           name="email"
@@ -87,7 +64,14 @@ const LoginFormComponent = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Loading...' : 'Submit'}
+        </Button>
+        {error && (
+          <p className="text-sm text-red-500">
+            Error submitting form: {error.data.error}
+          </p>
+        )}
       </form>
     </Form>
   );

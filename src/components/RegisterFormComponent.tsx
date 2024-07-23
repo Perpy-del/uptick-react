@@ -1,10 +1,5 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useDispatch, useSelector } from 'react-redux';
-
 import { Button } from '../components/ui/button';
 import {
   Form,
@@ -17,39 +12,12 @@ import {
 import { Input } from '../components/ui/input';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { Dispatch } from '@reduxjs/toolkit';
-import { signup } from '../uptickBlogStore/authSlice';
-import { useToast } from './ui/use-toast';
-import { useNavigate } from 'react-router-dom';
-
-const formSchema = z.object({
-  firstName: z.string().min(3).max(50),
-  lastName: z.string().min(3).max(50),
-  email: z.string().email(),
-  password: z.string().min(6).max(50),
-  confirmPassword: z.string(),
-});
+import { useUptickHook } from '../hooks/useUptickHook';
 
 const RegisterFormComponent = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const dispatch: Dispatch<any> = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { loading, error } = useSelector((state: any) => state.auth);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  });
-
-  const { reset } = form;
+  const { signUpForm, signUpSubmit, signUpLoading, signUpError } = useUptickHook();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -57,34 +25,13 @@ const RegisterFormComponent = () => {
 
   const toggleConfirmPassword = () => {
     setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await dispatch(
-        signup({
-          email: values.email,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          password: values.password,
-          confirmPassword: values.confirmPassword,
-        })
-      ).unwrap();
-      toast({
-        description: 'Account created successfully',
-      });
-      reset();
-      navigate('/login');
-    } catch (error) {
-      console.error('Signup failed', error);
-    }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+    <Form {...signUpForm}>
+      <form onSubmit={signUpForm.handleSubmit(signUpSubmit)} className="space-y-2">
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="firstName"
           render={({ field }) => (
             <FormItem>
@@ -97,7 +44,7 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="lastName"
           render={({ field }) => (
             <FormItem>
@@ -110,7 +57,7 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -123,7 +70,7 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="password"
           render={({ field }) => (
             <FormItem>
@@ -148,7 +95,7 @@ const RegisterFormComponent = () => {
           )}
         />
         <FormField
-          control={form.control}
+          control={signUpForm.control}
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
@@ -176,12 +123,12 @@ const RegisterFormComponent = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Loading...' : 'Submit'}
+        <Button type="submit" disabled={signUpLoading}>
+          {signUpLoading ? 'Loading...' : 'Submit'}
         </Button>
-        {error && (
+        {signUpError && (
           <p className="text-sm text-red-500">
-            Error submitting the form: {error.data.error}
+            Error submitting the form: {signUpError.data.error}
           </p>
         )}
       </form>

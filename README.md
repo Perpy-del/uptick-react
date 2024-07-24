@@ -32,7 +32,7 @@ Deployed using Vercel:
 
 #### Screenshot of the app:
 
-![Uptick-React](https://github.com/user-attachments/assets/d92d9f7a-189b-4b87-a86a-179664a9d35d)
+![Uptick-React](./uptick-react.png)
 
 
 

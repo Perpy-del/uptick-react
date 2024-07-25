@@ -22,7 +22,7 @@ const Blog = () => {
   
   const lastBlog = filteredBlogs[filteredBlogs.length - 1];
 
-  if (!blogs.length > 0) {
+  if (blogs.length === 0) {
     <div className="flex items-center justify-center text-lg font-bold">
       <h1>Loading</h1>
     </div>;
